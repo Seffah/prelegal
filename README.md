@@ -17,6 +17,34 @@ prelegal aims to help users draft common legal agreements quickly and consistent
 - [ ] Design the architecture
 - [ ] Build an initial prototype
 
+## Project structure
+
+```
+backend/   FastAPI API (Python, managed with uv)
+frontend/  Next.js web app (TypeScript, App Router)
+```
+
+## Getting started
+
+Backend (runs on http://localhost:8000):
+
+```bash
+cd backend
+uv sync
+uv run uvicorn app.main:app --reload
+uv run pytest
+```
+
+Frontend (runs on http://localhost:3000; `/api/*` is proxied to the backend):
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Copy each `.env.example` to `.env` to override the defaults.
+
 ## Contributing
 
 The project isn't ready for code contributions yet. Ideas and feedback are welcome through [GitHub issues](https://github.com/Seffah/prelegal/issues).
