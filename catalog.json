@@ -1,0 +1,66 @@
+{
+  "source": "https://github.com/CommonPaper",
+  "license": "CC BY 4.0",
+  "templates": [
+    {
+      "name": "AI Addendum",
+      "description": "Addendum to a services agreement governing the provider's AI services, including customer Input, generated Output, and restrictions on training models with customer data.",
+      "filename": "templates/AI-Addendum.md"
+    },
+    {
+      "name": "Business Associate Agreement",
+      "description": "HIPAA Business Associate Agreement setting out how a provider may use, disclose, and safeguard protected health information (PHI) on behalf of a covered entity.",
+      "filename": "templates/BAA.md"
+    },
+    {
+      "name": "Cloud Service Agreement",
+      "description": "Standard terms for selling and buying cloud software (SaaS), covering access and use, fees, confidentiality, warranties, liability, and term and termination.",
+      "filename": "templates/CSA.md"
+    },
+    {
+      "name": "Data Processing Agreement",
+      "description": "Agreement governing a provider's processing of customer personal data, covering controller/processor roles, subprocessors, security, data subject requests, and international transfers.",
+      "filename": "templates/DPA.md"
+    },
+    {
+      "name": "Design Partner Agreement",
+      "description": "Agreement giving an early design partner access to a product in development in exchange for feedback, with terms on confidentiality, IP ownership, and term.",
+      "filename": "templates/design-partner-agreement.md"
+    },
+    {
+      "name": "Mutual Non-Disclosure Agreement Cover Page",
+      "description": "Cover page for the Mutual NDA where the parties fill in the purpose, effective date, MNDA term, confidentiality period, governing law, and jurisdiction, and sign.",
+      "filename": "templates/Mutual-NDA-coverpage.md"
+    },
+    {
+      "name": "Mutual Non-Disclosure Agreement Standard Terms",
+      "description": "Standard terms of a mutual NDA allowing both parties to share confidential information for a stated purpose, with obligations on use, protection, and return of that information.",
+      "filename": "templates/Mutual-NDA.md"
+    },
+    {
+      "name": "Partnership Agreement",
+      "description": "Agreement for business partnerships such as referral, reseller, or co-marketing arrangements, covering each party's obligations, trademark use, payments, and liability.",
+      "filename": "templates/Partnership-Agreement.md"
+    },
+    {
+      "name": "Pilot Agreement",
+      "description": "Short-term agreement allowing a prospective customer to trial or evaluate a product before committing to a full commercial contract.",
+      "filename": "templates/Pilot-Agreement.md"
+    },
+    {
+      "name": "Professional Services Agreement",
+      "description": "Agreement for professional services delivered under statements of work (SOWs), covering deliverables, fees, IP ownership, warranties, and liability.",
+      "filename": "templates/psa.md"
+    },
+    {
+      "name": "Service Level Agreement",
+      "description": "Service level commitments for a cloud service, defining uptime targets, support response times, and service credits when targets are missed.",
+      "filename": "templates/sla.md"
+    },
+    {
+      "name": "Software License Agreement",
+      "description": "Standard terms for licensing installable or on-premise software, covering license scope, restrictions, fees, support, warranties, and liability.",
+      "filename": "templates/Software-License-Agreement.md"
+    }
+  ]
+}
