@@ -1,0 +1,281 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 24rem) minmax(0, 1fr);
+  gap: 2rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  align-items: start;
+}
+
+@media (max-width: 52rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Form */
+
+.sidebar {
+  position: sticky;
+  top: 1rem;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+@media (max-width: 52rem) {
+  .sidebar {
+    position: static;
+    max-height: none;
+  }
+}
+
+.sidebar h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.intro {
+  margin: 0 0 1rem;
+  color: #555;
+}
+
+.form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.form legend {
+  padding: 0 0.25rem;
+  font-weight: 600;
+}
+
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form input[type="text"],
+.form input[type="date"],
+.form textarea {
+  font: inherit;
+  font-weight: 400;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #666;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.groupLabel {
+  font-weight: 500;
+}
+
+.form .choice {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 400;
+}
+
+.years {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.years input {
+  width: 3.5rem;
+  font: inherit;
+  padding: 0.2rem 0.3rem;
+}
+
+.download {
+  width: 100%;
+  padding: 0.7rem;
+  font: inherit;
+  font-weight: 600;
+  color: #fff;
+  background: #1f3a5f;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.download:hover:not(:disabled) {
+  background: #2c5282;
+}
+
+.download:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.error {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #b91c1c;
+}
+
+/* Document */
+
+.document {
+  padding: 3rem;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.55;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.document h1 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.document h2 {
+  margin-top: 2rem;
+  font-size: 1.15rem;
+  text-transform: uppercase;
+}
+
+.document h3 {
+  margin: 1.25rem 0 0.25rem;
+  font-size: 1rem;
+}
+
+.document h3 + p {
+  margin-top: 0;
+}
+
+.filled {
+  background: #eef4ff;
+}
+
+.blank {
+  color: #b45309;
+  background: #fff7e6;
+}
+
+.checklist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.unchecked {
+  color: #888;
+}
+
+.preWrap {
+  white-space: pre-wrap;
+}
+
+.signatures {
+  width: 100%;
+  margin: 1.5rem 0;
+  border-collapse: collapse;
+  break-inside: avoid;
+}
+
+.signatures th,
+.signatures td {
+  padding: 0.6rem 0.5rem;
+  border: 1px solid #999;
+  text-align: left;
+}
+
+.signatures thead th {
+  text-align: center;
+}
+
+.signatures tbody th {
+  width: 9rem;
+  font-weight: 600;
+}
+
+.signatures td {
+  width: calc((100% - 9rem) / 2);
+  height: 1.5rem;
+}
+
+.attribution {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.standardTerms {
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+  break-before: page;
+}
+
+.standardTerms ol > li {
+  margin-bottom: 0.75rem;
+}
+
+/* Cover Page references in the Standard Terms, e.g. "Purpose". */
+.standardTerms :global(.coverpage_link) {
+  font-weight: 600;
+}
+
+/* Print / PDF: only the agreement itself. */
+
+@media print {
+  .layout {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .document {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    font-size: 11pt;
+  }
+
+  .document a {
+    color: inherit;
+  }
+
+  .filled {
+    background: none;
+  }
+
+  .blank {
+    color: inherit;
+    background: none;
+  }
+
+  .standardTerms {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+}
