@@ -56,3 +56,12 @@ export function formatDate(iso: string): string {
 export function years(n: number): string {
   return `${n} year${n === 1 ? "" : "s"}`;
 }
+
+/** A run of text in the Standard Terms, as needed to lay them out in the PDF. */
+export type TextRun = { text: string; bold?: boolean; href?: string };
+
+export type StandardTerms = {
+  title: string;
+  clauses: TextRun[][];
+  footer: TextRun[];
+};

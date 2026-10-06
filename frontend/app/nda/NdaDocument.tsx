@@ -1,10 +1,17 @@
 import type { ReactNode } from "react";
 
-import { formatDate, years, type NdaData } from "./types";
+import {
+  attribution,
+  confidentialityOptions,
+  intro,
+  mndaTermOptions,
+  modificationsText,
+  partyRows,
+  signingStatement,
+  type Option,
+} from "./coverPage";
+import { formatDate, type NdaData, type TextRun } from "./types";
 import styles from "./nda.module.css";
-
-const STANDARD_TERMS_URL = "https://commonpaper.com/standards/mutual-nda/1.0";
-const CC_BY_URL = "https://creativecommons.org/licenses/by/4.0/";
 
 /** A filled-in value, or a highlighted placeholder when it is still empty. */
 function Field({ value, placeholder }: { value: string; placeholder: string }) {
@@ -15,11 +22,28 @@ function Field({ value, placeholder }: { value: string; placeholder: string }) {
   );
 }
 
-function Check({ checked, children }: { checked: boolean; children: ReactNode }) {
+function Runs({ runs }: { runs: TextRun[] }) {
+  return runs.map((run, i) => {
+    const text = run.bold ? <strong>{run.text}</strong> : run.text;
+    return run.href ? (
+      <a key={i} href={run.href}>
+        {text}
+      </a>
+    ) : (
+      <span key={i}>{text}</span>
+    );
+  });
+}
+
+function Checklist({ options }: { options: Option[] }) {
   return (
-    <li className={checked ? styles.checked : styles.unchecked}>
-      <span aria-hidden>{checked ? "☒" : "☐"}</span> {children}
-    </li>
+    <ul className={styles.checklist}>
+      {options.map((o) => (
+        <li key={o.label} className={o.checked ? undefined : styles.unchecked}>
+          <span aria-hidden>{o.checked ? "☒" : "☐"}</span> {o.label}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -29,28 +53,13 @@ type Props = {
 };
 
 export default function NdaDocument({ data, standardTerms }: Props) {
-  const { party1, party2 } = data;
-  const partyRows: [string, string, string][] = [
-    ["Signature", "", ""],
-    ["Print Name", party1.name, party2.name],
-    ["Title", party1.title, party2.title],
-    ["Company", party1.company, party2.company],
-    ["Notice Address", party1.address, party2.address],
-    ["Date", "", ""],
-  ];
-
   return (
     <article className={styles.document}>
       <h1>Mutual Non-Disclosure Agreement</h1>
 
       <h2>Using this Mutual Non-Disclosure Agreement</h2>
       <p>
-        This Mutual Non-Disclosure Agreement (the “MNDA”) consists of: (1) this Cover Page (“
-        <strong>Cover Page</strong>”) and (2) the Common Paper Mutual NDA Standard Terms Version 1.0
-        (“<strong>Standard Terms</strong>”) identical to those posted at{" "}
-        <a href={STANDARD_TERMS_URL}>commonpaper.com/standards/mutual-nda/1.0</a>. Any modifications
-        of the Standard Terms should be made on the Cover Page, which will control over conflicts
-        with the Standard Terms.
+        <Runs runs={intro} />
       </p>
 
       <h3>Purpose</h3>
@@ -64,24 +73,10 @@ export default function NdaDocument({ data, standardTerms }: Props) {
       </p>
 
       <h3>MNDA Term</h3>
-      <ul className={styles.checklist}>
-        <Check checked={data.mndaTermType === "expires"}>
-          Expires {years(data.mndaTermYears)} from Effective Date.
-        </Check>
-        <Check checked={data.mndaTermType === "continues"}>
-          Continues until terminated in accordance with the terms of the MNDA.
-        </Check>
-      </ul>
+      <Checklist options={mndaTermOptions(data)} />
 
       <h3>Term of Confidentiality</h3>
-      <ul className={styles.checklist}>
-        <Check checked={data.confidentialityType === "years"}>
-          {years(data.confidentialityYears)} from Effective Date, but in the case of trade secrets
-          until Confidential Information is no longer considered a trade secret under applicable
-          laws.
-        </Check>
-        <Check checked={data.confidentialityType === "perpetual"}>In perpetuity.</Check>
-      </ul>
+      <Checklist options={confidentialityOptions(data)} />
 
       <h3>Governing Law &amp; Jurisdiction</h3>
       <p>
@@ -92,9 +87,9 @@ export default function NdaDocument({ data, standardTerms }: Props) {
       </p>
 
       <h3>MNDA Modifications</h3>
-      <p className={styles.preWrap}>{data.modifications.trim() || "None."}</p>
+      <p className={styles.preWrap}>{modificationsText(data)}</p>
 
-      <p>By signing this Cover Page, each party agrees to enter into this MNDA as of the Effective Date.</p>
+      <p>{signingStatement}</p>
 
       <table className={styles.signatures}>
         <thead>
@@ -105,7 +100,7 @@ export default function NdaDocument({ data, standardTerms }: Props) {
           </tr>
         </thead>
         <tbody>
-          {partyRows.map(([label, v1, v2]) => (
+          {partyRows(data).map(([label, v1, v2]) => (
             <tr key={label}>
               <th scope="row">{label}</th>
               <td>{v1}</td>
@@ -116,8 +111,7 @@ export default function NdaDocument({ data, standardTerms }: Props) {
       </table>
 
       <p className={styles.attribution}>
-        Common Paper Mutual Non-Disclosure Agreement (Version 1.0) free to use under{" "}
-        <a href={CC_BY_URL}>CC BY 4.0</a>.
+        <Runs runs={attribution} />
       </p>
 
       <section className={styles.standardTerms}>{standardTerms}</section>
