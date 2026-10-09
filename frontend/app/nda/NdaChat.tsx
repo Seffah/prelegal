@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import Markdown from "react-markdown";
 
 import { todayIso, type NdaData } from "./types";
 import styles from "./nda.module.css";
@@ -76,12 +77,19 @@ export default function NdaChat({ data, onChange }: Props) {
   return (
     <section className={styles.chat} aria-label="Chat with the AI assistant">
       <div ref={logRef} className={styles.messages} role="log" aria-live="polite">
-        {messages.map((m, i) => (
-          <p key={i} className={m.role === "user" ? styles.userMessage : styles.aiMessage}>
-            {m.content}
-          </p>
-        ))}
-        {thinking && <p className={`${styles.aiMessage} ${styles.thinking}`}>Thinking…</p>}
+        {messages.map((m, i) =>
+          m.role === "user" ? (
+            <div key={i} className={`${styles.message} ${styles.userMessage}`}>
+              {m.content}
+            </div>
+          ) : (
+            // The AI may use light Markdown (bold, lists); raw HTML is escaped.
+            <div key={i} className={`${styles.message} ${styles.aiMessage}`}>
+              <Markdown>{m.content}</Markdown>
+            </div>
+          ),
+        )}
+        {thinking && <div className={`${styles.message} ${styles.aiMessage} ${styles.thinking}`}>Thinking…</div>}
       </div>
 
       {error && (

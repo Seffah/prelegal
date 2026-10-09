@@ -62,13 +62,30 @@
   overflow-y: auto;
 }
 
-.messages p {
+.message {
   max-width: 85%;
-  margin: 0;
   padding: 0.5rem 0.75rem;
   border-radius: 10px;
   line-height: 1.45;
-  white-space: pre-wrap;
+}
+
+.aiMessage > :first-child {
+  margin-top: 0;
+}
+
+.aiMessage > :last-child {
+  margin-bottom: 0;
+}
+
+.aiMessage p,
+.aiMessage ul,
+.aiMessage ol {
+  margin: 0.4rem 0;
+}
+
+.aiMessage ul,
+.aiMessage ol {
+  padding-left: 1.25rem;
 }
 
 .aiMessage {
@@ -78,6 +95,7 @@
 
 .userMessage {
   align-self: flex-end;
+  white-space: pre-wrap;
   color: #fff;
   background: #209dd7;
 }
