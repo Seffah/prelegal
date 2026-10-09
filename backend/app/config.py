@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     openrouter_api_key: str = ""
     # Recreated from scratch every time the app starts.
     database_path: Path = Path("data/prelegal.db")
+    # Common Paper templates (repo-root templates/ in development; copied into the Docker image).
+    templates_dir: Path = Path("../templates")
     # Statically exported frontend; served at / when present (i.e. in the Docker image).
     static_dir: Path = Path("static")
 

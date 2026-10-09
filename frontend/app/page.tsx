@@ -4,9 +4,12 @@ export default function Home() {
   return (
     <main>
       <h1>prelegal</h1>
-      <p>A platform for drafting legal agreements.</p>
       <p>
-        <Link href="/nda">Create a Mutual NDA →</Link>
+        Draft common legal agreements by chatting with an AI assistant. It helps you choose the
+        right Common Paper template, asks for the key terms and fills in the document as you go.
+      </p>
+      <p>
+        <Link href="/draft">Start drafting →</Link>
       </p>
     </main>
   );

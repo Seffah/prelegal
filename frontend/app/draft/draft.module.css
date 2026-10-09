@@ -204,20 +204,7 @@
   background: #fff7e6;
 }
 
-.checklist {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.unchecked {
-  color: #888;
-}
-
-.preWrap {
-  white-space: pre-wrap;
-}
-
+.keyTerms,
 .signatures {
   width: 100%;
   margin: 1.5rem 0;
@@ -225,6 +212,8 @@
   break-inside: avoid;
 }
 
+.keyTerms th,
+.keyTerms td,
 .signatures th,
 .signatures td {
   padding: 0.6rem 0.5rem;
@@ -234,6 +223,12 @@
 
 .signatures thead th {
   text-align: center;
+}
+
+.keyTerms th {
+  width: 14rem;
+  font-weight: 600;
+  vertical-align: top;
 }
 
 .signatures tbody th {
@@ -258,13 +253,70 @@
   break-before: page;
 }
 
-.standardTerms ol > li {
-  margin-bottom: 0.75rem;
+/* Number clauses like the Common Paper originals: 1., 1.1., ... */
+.standardTerms ol {
+  padding-left: 2.25rem;
+  list-style: none;
+  counter-reset: clause;
 }
 
-/* Cover Page references in the Standard Terms, e.g. "Purpose". */
-.standardTerms :global(.coverpage_link) {
+.standardTerms ol > li {
+  margin-bottom: 0.75rem;
+  counter-increment: clause;
+}
+
+.standardTerms ol > li::before {
+  float: left;
+  margin-left: -2.25rem;
+  content: counters(clause, ".") ".";
+}
+
+/* Sub-clauses such as "a." carry their own label. */
+.standardTerms ul {
+  padding-left: 1.5rem;
+  list-style: none;
+}
+
+.standardTerms ul > li {
+  margin: 0.4rem 0;
+}
+
+/* Clause headings and Cover Page variables, e.g. "Governing Law". */
+.standardTerms :global([class^="header_"]),
+.standardTerms :global([class$="_link"]) {
   font-weight: 600;
+}
+
+/* Before a document is chosen */
+
+.catalog {
+  padding: 2rem 3rem;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.catalog h2 {
+  margin-top: 0;
+  color: #032147;
+}
+
+.catalog ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.catalog li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid #eee;
+}
+
+.catalog li span {
+  color: #888;
+  font-size: 0.9rem;
 }
 
 /* Print / PDF: only the agreement itself. */

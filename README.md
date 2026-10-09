@@ -4,7 +4,7 @@ A platform for drafting legal agreements from [Common Paper](https://github.com/
 
 ## Status
 
-The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. The only product feature so far is the Mutual NDA creator at `/nda`: chat with an AI assistant, which fills in the agreement as you answer, then download it as a PDF. More document types, sign up and sign in are planned.
+The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. At `/draft` you chat with an AI assistant that helps you pick one of 11 Common Paper agreements (see `catalog.json`), asks for its key terms, fills in a live preview as you answer, and lets you download the result as a PDF. If you ask for a document it can't create, it suggests the closest one it can. Sign up and sign in are planned.
 
 ## Running with Docker
 
@@ -36,6 +36,7 @@ The app is then available at http://localhost:8000. The SQLite database is creat
 
 ```
 backend/    FastAPI app (Python, managed with uv); serves /api and the built frontend
+            app/documents.json defines each document's Cover Page fields and parties
 frontend/   Next.js app (TypeScript, App Router), exported as static files
 templates/  Common Paper agreement templates (see catalog.json)
 scripts/    Start and stop scripts for each platform
