@@ -4,11 +4,17 @@ A platform for drafting legal agreements from [Common Paper](https://github.com/
 
 ## Status
 
-The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. The only product feature so far is the Mutual NDA creator prototype at `/nda`. AI chat drafting, sign up and sign in are planned.
+The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. The only product feature so far is the Mutual NDA creator at `/nda`: chat with an AI assistant, which fills in the agreement as you answer, then download it as a PDF. More document types, sign up and sign in are planned.
 
 ## Running with Docker
 
-Requires Docker. Secrets such as `OPENROUTER_API_KEY` are read from an optional `.env` file in the project root.
+Requires Docker. The AI chat needs an [OpenRouter](https://openrouter.ai) API key in a `.env` file in the project root:
+
+```bash
+OPENROUTER_API_KEY=sk-or-...
+```
+
+It uses a free model, so replies can be slow or rate-limited.
 
 ```bash
 # Mac
@@ -44,6 +50,7 @@ cd backend
 uv sync
 uv run uvicorn app.main:app --reload
 uv run pytest
+RUN_LIVE_TESTS=1 uv run pytest   # also calls OpenRouter
 ```
 
 Frontend (http://localhost:3000; `/api/*` is proxied to the backend):
