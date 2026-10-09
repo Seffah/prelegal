@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app import chat, documents
+from app import auth, chat, documents, saved
 from app.config import settings
 from app.db import init_db
 
@@ -32,8 +32,10 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+app.include_router(auth.router)
 app.include_router(chat.router)
 app.include_router(documents.router)
+app.include_router(saved.router)
 
 
 # Mounted last so the /api routes take precedence. In local development the

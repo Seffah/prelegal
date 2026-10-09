@@ -4,7 +4,7 @@ A platform for drafting legal agreements from [Common Paper](https://github.com/
 
 ## Status
 
-The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. At `/draft` you chat with an AI assistant that helps you pick one of 11 Common Paper agreements (see `catalog.json`), asks for its key terms, fills in a live preview as you answer, and lets you download the result as a PDF. If you ask for a document it can't create, it suggests the closest one it can. Sign up and sign in are planned.
+The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. At `/draft` you chat with an AI assistant that helps you pick one of 11 Common Paper agreements (see `catalog.json`), asks for its key terms, fills in a live preview as you answer, and lets you download the result as a PDF. If you ask for a document it can't create, it suggests the closest one it can. Anyone can draft; with an account (sign up at `/signup`), every PDF you download is also saved to My documents (`/documents`) so you can come back to it.
 
 ## Running with Docker
 
@@ -30,7 +30,7 @@ scripts/start-windows.ps1
 scripts/stop-windows.ps1
 ```
 
-The app is then available at http://localhost:8000. The SQLite database is created from scratch each time the app starts, so data does not survive a restart.
+The app is then available at http://localhost:8000. The SQLite database is created from scratch each time the app starts, so accounts and saved documents do not survive a restart, and everyone is signed out.
 
 ## Project structure
 

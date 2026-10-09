@@ -15,13 +15,26 @@ def columns(path: Path, table: str) -> list[str]:
 
 def test_init_db_creates_users_table(tmp_database: Path) -> None:
     init_db(tmp_database)
-    assert columns(tmp_database, "users") == ["id", "email", "password_hash", "created_at"]
+    assert columns(tmp_database, "users") == ["id", "name", "email", "password_hash", "created_at"]
+
+
+def test_init_db_creates_saved_documents_table(tmp_database: Path) -> None:
+    init_db(tmp_database)
+    assert columns(tmp_database, "saved_documents") == [
+        "id",
+        "user_id",
+        "document_type",
+        "title",
+        "data",
+        "created_at",
+        "updated_at",
+    ]
 
 
 def test_init_db_discards_previous_data(tmp_database: Path) -> None:
     init_db(tmp_database)
     with sqlite3.connect(tmp_database) as conn:
-        conn.execute("INSERT INTO users (email, password_hash) VALUES ('a@b.com', 'x')")
+        conn.execute("INSERT INTO users (name, email, password_hash) VALUES ('A', 'a@b.com', 'x')")
 
     init_db(tmp_database)
 
@@ -32,9 +45,11 @@ def test_init_db_discards_previous_data(tmp_database: Path) -> None:
 def test_email_is_unique_ignoring_case(tmp_database: Path) -> None:
     init_db(tmp_database)
     with sqlite3.connect(tmp_database) as conn:
-        conn.execute("INSERT INTO users (email, password_hash) VALUES ('a@b.com', 'x')")
+        conn.execute("INSERT INTO users (name, email, password_hash) VALUES ('A', 'a@b.com', 'x')")
         with pytest.raises(sqlite3.IntegrityError):
-            conn.execute("INSERT INTO users (email, password_hash) VALUES ('A@B.com', 'y')")
+            conn.execute(
+                "INSERT INTO users (name, email, password_hash) VALUES ('B', 'A@B.com', 'y')"
+            )
 
 
 def test_startup_creates_database(tmp_database: Path) -> None:

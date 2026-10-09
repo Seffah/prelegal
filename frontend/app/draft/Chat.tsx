@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import Markdown from "react-markdown";
 
+import { api } from "../lib/api";
 import { todayIso, type Draft } from "./types";
 import styles from "./draft.module.css";
 
@@ -45,16 +46,10 @@ export default function Chat({ draft, onChange }: Props) {
     setThinking(true);
     setError(null);
     try {
-      const res = await fetch("/api/chat", {
+      const { reply, ...next } = await api<ChatResponse>("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...draft, messages: history, today: todayIso() }),
+        body: { ...draft, messages: history, today: todayIso() },
       });
-      const body = await res.json();
-      if (!res.ok) {
-        throw new Error(typeof body.detail === "string" ? body.detail : "The AI could not respond.");
-      }
-      const { reply, ...next } = body as ChatResponse;
       setMessages([...history, { role: "assistant", content: reply }]);
       onChange(next);
     } catch (err) {
@@ -93,7 +88,7 @@ export default function Chat({ draft, onChange }: Props) {
       </div>
 
       {error && (
-        <p role="alert" className={styles.error}>
+        <p role="alert" className={`form-error ${styles.chatError}`}>
           {error}
         </p>
       )}
@@ -107,7 +102,7 @@ export default function Chat({ draft, onChange }: Props) {
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
         />
-        <button type="submit" disabled={thinking || !input.trim()}>
+        <button type="submit" className="button button-submit" disabled={thinking || !input.trim()}>
           Send
         </button>
       </form>

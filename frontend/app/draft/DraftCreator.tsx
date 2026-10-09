@@ -1,111 +1,189 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
+import { api } from "../lib/api";
+import { useAuth } from "../lib/auth";
+import AuthForm, { type AuthMode } from "../lib/AuthForm";
+import AgreementList from "./AgreementList";
 import Chat from "./Chat";
 import DocumentPreview from "./DocumentPreview";
-import { emptyDraft, pdfFilename, type DocumentDetail, type DocumentSummary, type Draft } from "./types";
+import { downloadPdf } from "./pdf";
+import { emptyDraft, type DocumentDetail, type Draft } from "./types";
 import styles from "./draft.module.css";
 
-async function getJson<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`${url} returned ${res.status}`);
-  return res.json();
-}
+/** What happened to the draft after its PDF was downloaded. */
+type SaveState = "idle" | "saving" | "saved" | "needs-account" | "failed";
 
 export default function DraftCreator() {
+  const { token } = useAuth();
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [document, setDocument] = useState<DocumentDetail | null>(null);
-  const [catalog, setCatalog] = useState<DocumentSummary[]>([]);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    getJson<DocumentSummary[]>("/api/documents").then(setCatalog, console.error);
-  }, []);
+  // Downloading the same draft again updates its saved copy instead of adding another.
+  const [savedId, setSavedId] = useState<number | null>(null);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [authMode, setAuthMode] = useState<AuthMode>("signup");
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   // Load the template and fields whenever the chat picks or switches the document.
   useEffect(() => {
     setDocument(null);
+    setSavedId(null);
+    setSaveState("idle");
     if (!draft.documentId) return;
     let current = true;
-    getJson<DocumentDetail>(`/api/documents/${draft.documentId}`)
+    api<DocumentDetail>(`/api/documents/${draft.documentId}`)
       .then((d) => current && setDocument(d))
       .catch((e) => {
         console.error(e);
-        if (current) setError("Sorry, the document could not be loaded. Please reload the page.");
+        if (current) setError("The document could not be loaded. Reload the page to try again.");
       });
     return () => {
       current = false;
     };
   }, [draft.documentId]);
 
+  const save = useCallback(async () => {
+    if (!token) {
+      setSaveState("needs-account");
+      return;
+    }
+    setSaveState("saving");
+    try {
+      const saved = await api<{ id: number }>(savedId ? `/api/my-documents/${savedId}` : "/api/my-documents", {
+        method: savedId ? "PUT" : "POST",
+        body: draft,
+        token,
+      });
+      setSavedId(saved.id);
+      setSaveState("saved");
+    } catch (e) {
+      console.error(e);
+      setSaveState("failed");
+    }
+  }, [token, savedId, draft]);
+
+  // Signing in from the prompt below saves the document that was just downloaded.
+  useEffect(() => {
+    if (token && saveState === "needs-account") save();
+  }, [token, saveState, save]);
+
   async function download() {
     if (!document) return;
     setDownloading(true);
     setError(null);
     try {
-      // Loaded on demand: the PDF renderer is large and only needed here.
-      const [{ pdf }, { default: DocumentPdf }, { normalizeTemplate, parseStandardTerms }] =
-        await Promise.all([import("@react-pdf/renderer"), import("./DocumentPdf"), import("./standardTerms")]);
-      const standardTerms = parseStandardTerms(normalizeTemplate(document.markdown));
-      const blob = await pdf(
-        <DocumentPdf document={document} draft={draft} standardTerms={standardTerms} />,
-      ).toBlob();
-      const url = URL.createObjectURL(blob);
-      const link = window.document.createElement("a");
-      link.href = url;
-      link.download = pdfFilename(document, draft);
-      link.click();
-      // Revoke after the browser has started the download.
-      setTimeout(() => URL.revokeObjectURL(url), 0);
+      await downloadPdf(document, draft);
     } catch (e) {
       console.error(e);
-      setError("Sorry, the PDF could not be generated. Please try again.");
+      setError("The PDF could not be generated. Try downloading again.");
+      return;
     } finally {
       setDownloading(false);
     }
+    await save();
+  }
+
+  function openAuth(mode: AuthMode) {
+    setAuthMode(mode);
+    dialogRef.current?.showModal();
   }
 
   return (
     <main className={styles.layout}>
       <aside className={styles.sidebar}>
-        <h1>{document?.name ?? "Draft an agreement"}</h1>
+        <h1>{document?.name ?? "New draft"}</h1>
         <p className={styles.intro}>
-          Chat with the AI to choose a document and fill in its key terms. The preview updates as
-          you go.
+          Tell the assistant what you need. It picks the right agreement, asks for the key terms
+          and fills in the document as you answer.
         </p>
         <Chat draft={draft} onChange={setDraft} />
         <button
           type="button"
-          className={styles.download}
+          className={`button button-submit ${styles.download}`}
           onClick={download}
           disabled={!document || downloading}
         >
           {downloading ? "Preparing PDF…" : "Download PDF"}
         </button>
         {error && (
-          <p role="alert" className={styles.error}>
+          <p role="alert" className="form-error">
             {error}
           </p>
         )}
+        <SaveNotice state={saveState} onRetry={save} onAuth={openAuth} />
       </aside>
 
       {document ? (
         <DocumentPreview document={document} draft={draft} />
       ) : (
-        <section className={styles.catalog}>
-          <h2>Documents I can draft</h2>
-          <ul>
-            {catalog.map((d) => (
-              <li key={d.id}>
-                <strong>{d.name}</strong>
-                <span>{d.description}</span>
-              </li>
-            ))}
-          </ul>
+        <section className={styles.catalog} aria-labelledby="catalog-heading">
+          <h2 id="catalog-heading">Agreements you can draft</h2>
+          <p>Describe your situation in the chat and the assistant will suggest one of these.</p>
+          <AgreementList />
         </section>
       )}
+
+      <dialog ref={dialogRef} className={styles.dialog} aria-label="Sign in to save your document">
+        <button
+          type="button"
+          className={styles.close}
+          aria-label="Close"
+          onClick={() => dialogRef.current?.close()}
+        >
+          ×
+        </button>
+        <AuthForm mode={authMode} onSwitch={setAuthMode} onDone={() => dialogRef.current?.close()} />
+      </dialog>
     </main>
   );
+}
+
+function SaveNotice({
+  state,
+  onRetry,
+  onAuth,
+}: {
+  state: SaveState;
+  onRetry: () => void;
+  onAuth: (mode: AuthMode) => void;
+}) {
+  switch (state) {
+    case "saving":
+      return <p className={styles.notice}>Saving to My documents…</p>;
+    case "saved":
+      return (
+        <p className={styles.notice} role="status">
+          Saved to <Link href="/documents">My documents</Link>.
+        </p>
+      );
+    case "failed":
+      return (
+        <p className="form-error" role="alert">
+          Your PDF downloaded, but it couldn’t be saved to My documents.{" "}
+          <button type="button" className={styles.inlineButton} onClick={onRetry}>
+            Try again
+          </button>
+        </p>
+      );
+    case "needs-account":
+      return (
+        <p className={styles.notice}>
+          Want to keep a copy?{" "}
+          <button type="button" className={styles.inlineButton} onClick={() => onAuth("signup")}>
+            Create an account
+          </button>{" "}
+          or{" "}
+          <button type="button" className={styles.inlineButton} onClick={() => onAuth("signin")}>
+            sign in
+          </button>{" "}
+          to save it to My documents.
+        </p>
+      );
+    default:
+      return null;
+  }
 }
