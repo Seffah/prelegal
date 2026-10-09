@@ -40,3 +40,5 @@ pnpm-debug.log*
 
 # --- Logs ---
 *.log
+# --- App data (SQLite, recreated on startup) ---
+backend/data/

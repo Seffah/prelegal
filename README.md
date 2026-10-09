@@ -1,32 +1,43 @@
 # prelegal
 
-A platform for drafting legal agreements, built as part of Ed Donner's coursework.
+A platform for drafting legal agreements from [Common Paper](https://github.com/CommonPaper) templates, built as part of Ed Donner's coursework.
 
 ## Status
 
-**This project is in the planning stage.** No application code has been written yet. The feature set, tech stack and architecture are still being worked out, and everything here may change.
+The V1 technical foundation is in place: a FastAPI backend that also serves the statically built Next.js frontend, a SQLite database, and Docker packaging with start and stop scripts. The only product feature so far is the Mutual NDA creator prototype at `/nda`. AI chat drafting, sign up and sign in are planned.
 
-## Goals
+## Running with Docker
 
-prelegal aims to help users draft common legal agreements quickly and consistently.
+Requires Docker. Secrets such as `OPENROUTER_API_KEY` are read from an optional `.env` file in the project root.
 
-## Roadmap
+```bash
+# Mac
+scripts/start-mac.sh
+scripts/stop-mac.sh
 
-- [ ] Define the scope and the first agreement types to support
-- [ ] Choose the tech stack
-- [ ] Design the architecture
-- [ ] Build an initial prototype
+# Linux
+scripts/start-linux.sh
+scripts/stop-linux.sh
+
+# Windows (PowerShell)
+scripts/start-windows.ps1
+scripts/stop-windows.ps1
+```
+
+The app is then available at http://localhost:8000. The SQLite database is created from scratch each time the app starts, so data does not survive a restart.
 
 ## Project structure
 
 ```
-backend/   FastAPI API (Python, managed with uv)
-frontend/  Next.js web app (TypeScript, App Router)
+backend/    FastAPI app (Python, managed with uv); serves /api and the built frontend
+frontend/   Next.js app (TypeScript, App Router), exported as static files
+templates/  Common Paper agreement templates (see catalog.json)
+scripts/    Start and stop scripts for each platform
 ```
 
-## Getting started
+## Local development
 
-Backend (runs on http://localhost:8000):
+Backend (http://localhost:8000):
 
 ```bash
 cd backend
@@ -35,7 +46,7 @@ uv run uvicorn app.main:app --reload
 uv run pytest
 ```
 
-Frontend (runs on http://localhost:3000; `/api/*` is proxied to the backend):
+Frontend (http://localhost:3000; `/api/*` is proxied to the backend):
 
 ```bash
 cd frontend
@@ -43,12 +54,8 @@ npm install
 npm run dev
 ```
 
-Copy each `.env.example` to `.env` to override the defaults.
-
-## Contributing
-
-The project isn't ready for code contributions yet. Ideas and feedback are welcome through [GitHub issues](https://github.com/Seffah/prelegal/issues).
+`npm run build` writes the static site to `frontend/out/`. Copy each `.env.example` to `.env` to override the defaults.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). Templates are from Common Paper under CC BY 4.0.
