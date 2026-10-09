@@ -3,27 +3,27 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import Markdown from "react-markdown";
 
-import { todayIso, type NdaData } from "./types";
-import styles from "./nda.module.css";
+import { todayIso, type Draft } from "./types";
+import styles from "./draft.module.css";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-type ChatResponse = { reply: string; nda: NdaData };
+type ChatResponse = Draft & { reply: string };
 
 // Static so that opening the page does not spend a (rate-limited) model call.
 const GREETING: Message = {
   role: "assistant",
   content:
-    "Hi! I'll help you draft a Mutual Non-Disclosure Agreement. To start, which two " +
-    "companies are entering into it, and why will they be sharing confidential information?",
+    "Hi! I can help you draft a legal agreement, such as an NDA, a cloud service agreement " +
+    "or a data processing agreement. What would you like to create?",
 };
 
 type Props = {
-  data: NdaData;
-  onChange: (data: NdaData) => void;
+  draft: Draft;
+  onChange: (draft: Draft) => void;
 };
 
-export default function NdaChat({ data, onChange }: Props) {
+export default function Chat({ draft, onChange }: Props) {
   const [messages, setMessages] = useState<Message[]>([GREETING]);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
@@ -48,15 +48,15 @@ export default function NdaChat({ data, onChange }: Props) {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history, nda: data, today: todayIso() }),
+        body: JSON.stringify({ ...draft, messages: history, today: todayIso() }),
       });
       const body = await res.json();
       if (!res.ok) {
         throw new Error(typeof body.detail === "string" ? body.detail : "The AI could not respond.");
       }
-      const { reply, nda } = body as ChatResponse;
+      const { reply, ...next } = body as ChatResponse;
       setMessages([...history, { role: "assistant", content: reply }]);
-      onChange(nda);
+      onChange(next);
     } catch (err) {
       // Roll back so the user can edit and resend their message.
       setMessages(messages);
