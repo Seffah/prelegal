@@ -3,8 +3,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import { pdfFilename } from "./coverPage";
+import NdaChat from "./NdaChat";
 import NdaDocument from "./NdaDocument";
-import NdaForm from "./NdaForm";
 import { defaultNdaData, todayIso, type NdaData, type StandardTerms } from "./types";
 import styles from "./nda.module.css";
 
@@ -55,9 +55,9 @@ export default function NdaCreator({ standardTerms, pdfStandardTerms }: Props) {
       <aside className={styles.sidebar}>
         <h1>Mutual NDA creator</h1>
         <p className={styles.intro}>
-          Fill in the key terms. The agreement on the right updates as you type.
+          Chat with the AI to fill in the key terms. The agreement updates as you go.
         </p>
-        <NdaForm data={data} onChange={setData} />
+        <NdaChat data={data} onChange={setData} />
         <button type="button" className={styles.download} onClick={download} disabled={downloading}>
           {downloading ? "Preparing PDF…" : "Download PDF"}
         </button>

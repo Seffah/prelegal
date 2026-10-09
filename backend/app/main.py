@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app import chat
 from app.config import settings
 from app.db import init_db
 
@@ -29,6 +30,9 @@ app.add_middleware(
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+app.include_router(chat.router)
 
 
 # Mounted last so the /api routes take precedence. In local development the
