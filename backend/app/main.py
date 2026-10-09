@@ -1,9 +1,21 @@
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
+from app.db import init_db
 
-app = FastAPI(title=settings.app_name)
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    init_db(settings.database_path)
+    yield
+
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,3 +29,9 @@ app.add_middleware(
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+# Mounted last so the /api routes take precedence. In local development the
+# frontend runs on the Next.js dev server instead, so the directory is absent.
+if settings.static_dir.is_dir():
+    app.mount("/", StaticFiles(directory=settings.static_dir, html=True), name="frontend")

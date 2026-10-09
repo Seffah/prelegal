@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    image: prelegal
+    container_name: prelegal
+    ports:
+      - "8000:8000"
+    # Provides OPENROUTER_API_KEY and other secrets; optional so the app starts without it.
+    env_file:
+      - path: .env
+        required: false
