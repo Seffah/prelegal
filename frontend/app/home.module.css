@@ -1,0 +1,250 @@
+/* Hero */
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: 4rem;
+  align-items: center;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 5rem 1.25rem 4.5rem;
+}
+
+.heroCopy h1 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 4.5vw, 3.4rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.heroCopy p {
+  max-width: 34rem;
+  margin: 1.5rem 0 2rem;
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+
+.ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* The demo: one message, and the cover page it fills in */
+
+.demo {
+  position: relative;
+  margin: 0;
+  padding: 2.5rem 0 0 2.5rem;
+}
+
+.bubble {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  max-width: 19rem;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.92rem;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 14px 14px 14px 4px;
+  box-shadow: 0 6px 16px rgba(3, 33, 71, 0.15);
+}
+
+.sheet {
+  padding: 3.25rem 2.25rem 2rem;
+  font-family: var(--font-serif);
+  background: var(--sheet);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: var(--shadow-sheet);
+}
+
+.sheetTitle {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--navy);
+}
+
+.sheetSubtitle {
+  margin: 0.2rem 0 1.25rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--gray);
+}
+
+.sheet dl {
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.row dt {
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.row dd {
+  margin: 0;
+}
+
+/* A highlighter stroke sweeps across each value, in order, once on load. */
+.row mark {
+  padding: 0.05em 0.15em;
+  color: inherit;
+  background: linear-gradient(var(--highlight), var(--highlight)) no-repeat left center / 100% 100%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  animation: highlight 0.5s ease-out both;
+}
+
+@keyframes highlight {
+  from {
+    background-size: 0% 100%;
+  }
+}
+
+/* How it works */
+
+.steps {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.steps h2,
+.agreements h2 {
+  margin: 0 0 2rem;
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.steps ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.steps li {
+  counter-increment: step;
+}
+
+.steps li::before {
+  content: counter(step);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--highlight);
+  border-radius: 50%;
+}
+
+.steps h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.steps p {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* Agreements */
+
+.agreements {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 4.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.agreementList {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agreementList li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.agreementList strong {
+  color: var(--navy);
+}
+
+.agreementList span {
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+/* Footer */
+
+.footer {
+  border-top: 1px solid var(--line);
+  background: var(--sheet);
+}
+
+.footer p {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+@media (max-width: 56rem) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    padding-top: 3rem;
+  }
+
+  .steps ol,
+  .agreementList {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 30rem) {
+  .demo {
+    padding-left: 0;
+  }
+
+  .sheet {
+    padding: 3.5rem 1.25rem 1.5rem;
+  }
+
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.15rem;
+  }
+}

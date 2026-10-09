@@ -3,15 +3,15 @@
 import json
 import logging
 from datetime import date
-from typing import Literal, Self
+from typing import Literal
 
 import litellm
 import openai
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field, create_model, model_validator
+from pydantic import BaseModel, Field, create_model
 
 from app.config import settings
-from app.documents import DOCUMENTS, DocumentType
+from app.documents import DOCUMENTS, DocumentId, DocumentType, DraftState, Party
 from app.models import CamelModel
 
 # Free OpenRouter endpoint with JSON Schema support (see the openrouter-free skill).
@@ -19,47 +19,19 @@ MODEL = "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
 
 logger = logging.getLogger(__name__)
 
-DocumentId = Literal[tuple(DOCUMENTS)]
-
-
-class Party(CamelModel):
-    company: str
-    name: str = Field(description="Signatory's name")
-    title: str = Field(description="Signatory's title")
-    address: str = Field(description="Notice address (email or postal)")
-
 
 class ChatMessage(CamelModel):
     role: Literal["user", "assistant"]
     content: str = Field(min_length=1, max_length=4000)
 
 
-class ChatState(CamelModel):
-    """The document being drafted. Values and parties are keyed by field and party role."""
-
-    document_id: DocumentId | None = None
-    values: dict[str, str] = Field(default_factory=dict)
-    parties: dict[str, Party] = Field(default_factory=dict)
-
-
-class ChatRequest(ChatState):
+class ChatRequest(DraftState):
     messages: list[ChatMessage] = Field(min_length=1, max_length=100)
     # The user's local date, so relative dates like "today" resolve in their timezone.
     today: date
 
-    @model_validator(mode="after")
-    def check_keys(self) -> Self:
-        if self.document_id is None:
-            return self
-        document = DOCUMENTS[self.document_id]
-        if not self.values.keys() <= {f.key for f in document.fields}:
-            raise ValueError("Unknown field for this document")
-        if not self.parties.keys() <= {p.key for p in document.parties}:
-            raise ValueError("Unknown party for this document")
-        return self
 
-
-class ChatResponse(ChatState):
+class ChatResponse(DraftState):
     reply: str
 
 

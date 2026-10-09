@@ -1,10 +1,149 @@
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+:root {
+  /* Brand palette (see CLAUDE.md) */
+  --navy: #032147;
+  --blue: #209dd7;
+  --purple: #753991;
+  --yellow: #ecad0a;
+  --gray: #888888;
+
+  /* Surfaces and text */
+  --paper: #f5f7fa;
+  --sheet: #ffffff;
+  --ink: #1d2733;
+  --muted: #5b6573;
+  --line: #dde3ea;
+  --line-strong: #c3ccd6;
+  --danger: #b42318;
+  /* The highlighter mark on values the AI has filled in */
+  --highlight: rgba(236, 173, 10, 0.32);
+
+  --font-sans: var(--font-plex), system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), Georgia, serif;
+
+  --radius: 8px;
+  --shadow-sheet: 0 1px 2px rgba(3, 33, 71, 0.06), 0 8px 24px rgba(3, 33, 71, 0.06);
 }
 
-main {
-  max-width: 48rem;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+a {
+  color: var(--blue);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Buttons: primary (blue) for navigation and actions, submit (purple) for forms. */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  color: #fff;
+  background: var(--blue);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+
+.button:hover:not(:disabled) {
+  background: #1a87ba;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.button-submit {
+  background: var(--purple);
+}
+
+.button-submit:hover:not(:disabled) {
+  background: #612f79;
+}
+
+.button-quiet {
+  color: var(--navy);
+  background: transparent;
+  border-color: var(--line-strong);
+}
+
+.button-quiet:hover:not(:disabled) {
+  background: #eaeef3;
+}
+
+/* Form fields */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--navy);
+}
+
+.field input {
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  font-weight: 400;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.field input:focus {
+  border-color: var(--blue);
+  outline: 2px solid rgba(32, 157, 215, 0.25);
+  outline-offset: 0;
+}
+
+.form-error {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+  color: var(--danger);
+  background: #fdf0ef;
+  border-radius: var(--radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
